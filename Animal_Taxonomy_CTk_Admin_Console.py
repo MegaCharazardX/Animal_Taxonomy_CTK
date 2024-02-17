@@ -994,6 +994,10 @@ def back_to_main_console():
     root.destroy()
     call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Main.py"])
 
+def Heli():
+    root.destroy()
+    call(["python", glb_current_working_directory + "/Helicopter.py"])
+
 menu_frame = CTkFrame(root, fg_color = "transparent")
 
 crud_frame = createFrame(menu_frame, glb_color_2,  border_line_size_2, glb_fg_color_transparent , 5, 5, 150, glb_crud_frame_height)
@@ -1030,6 +1034,8 @@ species_btn = createMenuButton(menu_frame, "Species", indicate, species_page, ge
 
 about_btn = createMenuButton(menu_frame, "About", indicate, about_page, species_btn)
 
+Heli_game = createMenuButton(menu_frame, "Heli Game", indicate, Heli, about_btn)
+
 menu_frame.pack(side = "left")
 menu_frame.pack_propagate(False)
 menu_frame.configure(width = 150, height = 550)
@@ -1041,4 +1047,4 @@ main_frame.pack_propagate(False)
 
 
 root.mainloop()
-con.close()
+con.close() 

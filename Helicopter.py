@@ -112,7 +112,7 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                 flying = True
             if event.key == pygame.K_RETURN:
                 if not active:
@@ -124,7 +124,7 @@ while run:
                         high_score = score
                     score = 0
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                 flying = False
     map_speed = 1+ score//75
     spacer = 10 + score//100
