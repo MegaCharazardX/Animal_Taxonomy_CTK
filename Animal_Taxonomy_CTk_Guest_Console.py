@@ -1,9 +1,11 @@
 from customtkinter import *
+from tkinter import colorchooser
 from PIL import Image
 import os 
 from subprocess import call
 import sqlite3
 from Global_Config import *
+
 
 root = CTk()
 
@@ -11,6 +13,7 @@ centreScreen(root, root,1000,550)
 root.title("Animal Taxonomy")
 root.maxsize(width = 1000, height = 550)
 root.iconbitmap(r"icon/favicon6.ico")
+root.minsize(width = 1000, height = 550)
 set_appearance_mode("Dark")
 
 con = sqlite3.connect("Animal_Taxonomy_Db.db", timeout = 3)
@@ -93,7 +96,7 @@ def createImageButton(_frame, _text, _image, _corner_radius, _call_back_function
     return tmp_btn
 
 def createSearchByLabel(_frame):
-    tmp_label = CTkLabel(_frame, text = "Search by :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    tmp_label = CTkLabel(_frame, text = "Search by :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_2)
     tmp_label.place(x = glb_common_xpos, y = 70)
     return tmp_label
 
@@ -149,7 +152,7 @@ def destroyAfterForLabel(_widget):
     _widget.configure("")
 
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=PAGES=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-    
+
 def home_page():
     home_frame = createFrame(main_frame,  glb_color_2,  2, "transparent", _is_content_frame = True)
 
@@ -465,7 +468,9 @@ def phylum_page():
 
     label = createSearchResultLabel(phylum_frame)
     
-    combo = CTkComboBox(phylum_frame, width = 640)
+    combo_val = ["Choose An Option"]
+    combo = CTkComboBox(phylum_frame, width = 640, values=combo_val)
+    combo.set("Choose An Option")
     combo.place(x = 10, y = 130)
 
 
@@ -619,6 +624,46 @@ Contact us --> +91 948 668 3398\n\
     label.place(x = 120, y = 80)
 
 
+def games_page ():
+    game_menu = CTk()
+    game_menu.iconbitmap(r"icon/favicon6.ico")
+    centreScreen(game_menu, root,400,200)
+    game_menu.title("Admin Login")
+    game_menu.maxsize(width = 400, height = 200)
+
+    global login_frame
+    login_frame = CTkFrame(game_menu, border_color = glb_color_1, border_width = 2, width = 400, height = 200)
+    login_frame.pack()
+
+    login_label = CTkLabel(login_frame, text = "Choose", font = ("Bradley Hand ITC" , 40, "italic", "bold"), text_color = glb_color_3)
+    login_label.place(x = 130, y = 5)
+
+    # username_label = CTkLabel(login_frame, text = "Username :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    # username_label.place(x = 15, y = 70)
+
+    global username_entry
+    online_btn = CTkButton(login_frame, text = "Online", width = 300)
+    online_btn.place(x = 55, y = 70)
+    
+    def Offline():
+        game_menu.destroy()
+        call(["python", glb_current_working_directory + "/Offline_Game_Menu.py"])
+    
+    global password_entry
+    offline_btn = CTkButton(login_frame, text = "Offline", width = 300, command = lambda: (Offline()))
+    offline_btn.place(x = 55, y = 110)
+
+    def back_to_admin_console():
+        game_menu.destroy()
+        call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Admin_Console.py"])
+
+    cancel_btn = CTkButton(login_frame, height = 15, text = "Back", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
+                            command = lambda: (indicate(home_page)))
+    cancel_btn.place(x = 120, y = 150)
+    
+    root.destroy()
+    game_menu.mainloop()
+        
 #=-=-=-=-=-=-=-EXTRA-=-=-=-=-=-=-=#
 
 def indicate(page):
@@ -631,7 +676,11 @@ def delete_pages():
 
 def back_to_main_console():
     root.destroy()
-    call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Main.py"])
+    call(["python", glb_current_working_directory + "/Games/Animal_Taxonamy_Ctk_Main.py"])
+
+# def Heli():
+#     root.destroy()
+#     call(["python", glb_current_working_directory + "/Helicopter.py"])
 
 menu_frame = CTkFrame(root, fg_color = "transparent")
 
@@ -662,6 +711,9 @@ species_btn = createMenuButton(menu_frame, "Species", indicate, species_page, ge
 
 about_btn = createMenuButton(menu_frame, "About", indicate, about_page, species_btn)
 
+games = createMenuButton(menu_frame, "Games", indicate, games_page, about_btn)
+#Heli_game = createMenuButton(menu_frame, "Heli Game", indicate, Heli, about_btn)
+
 menu_frame.pack(side = "left")
 menu_frame.pack_propagate(False)
 menu_frame.configure(width = 150, height = 550)
@@ -673,4 +725,4 @@ main_frame.pack_propagate(False)
 
 
 root.mainloop()
-con.close()
+con.close() 

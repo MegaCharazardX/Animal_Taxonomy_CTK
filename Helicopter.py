@@ -1,7 +1,8 @@
 # Helicopter in Python!
 import random
-
+from Global_Config import *
 import pygame
+from subprocess import call
 
 pygame.init()
 
@@ -26,7 +27,8 @@ map_speed = 2
 score = 0
 high_score = 0
 active = True
-heli = pygame.transform.scale(pygame.image.load('helicopter.png'), (60, 60))
+heli = pygame.transform.scale(pygame.image.load('Jet.png'), (60, 60))
+glb_current_working_directory = os.path.dirname(os.path.realpath(__file__))
 
 
 def generate_new():
@@ -111,6 +113,8 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+            pygame.quit()
+            call(["python", glb_current_working_directory + "/Offline_Game_Menu.py"])
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                 flying = True
@@ -123,17 +127,21 @@ while run:
                     if score > high_score:
                         high_score = score
                     score = 0
+            if event.key == pygame.K_q:
+                pygame.quit()
+                call(["python", glb_current_working_directory + "/Offline_Game_Menu.py"])
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
                 flying = False
     map_speed = 1+ score//75
     spacer = 10 + score//100
 
-    screen.blit(font.render(f'Score: {score}', True, 'black'), (20, 15))
+    #screen.blit(font.render(f'Score: {score}', True, 'black'), (20, 15))
     screen.blit(font.render(f'High Score: {high_score}', True, 'black'), (20, 565))
     if not active:
-        screen.blit(font.render('Press Enter to Restart', True, 'black'), (300, 15))
-        screen.blit(font.render('Press Enter to Restart', True, 'black'), (300, 565))
+        screen.blit(font.render('Press Enter to Restart & Q to Quit', True, 'black'), (300, 15))
+        screen.blit(font.render('Press Enter to Restart & Q to Quit', True, 'black'), (300, 565))
+
     pygame.display.flip()
 pygame.quit()
 
