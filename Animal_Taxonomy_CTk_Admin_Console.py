@@ -994,9 +994,6 @@ def games_page ():
     login_label = CTkLabel(login_frame, text = "Choose", font = ("Bradley Hand ITC" , 40, "italic", "bold"), text_color = glb_color_3)
     login_label.place(x = 130, y = 5)
 
-    # username_label = CTkLabel(login_frame, text = "Username :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
-    # username_label.place(x = 15, y = 70)
-
     global username_entry
     online_btn = CTkButton(login_frame, text = "Online", width = 300)
     online_btn.place(x = 55, y = 70)
@@ -1007,13 +1004,13 @@ def games_page ():
 
     def back_to_admin_console():
         game_menu.destroy()
-        call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Admin_Console.py"])
+        #call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Admin_Console.py"])
 
     cancel_btn = CTkButton(login_frame, height = 15, text = "Back", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
                             command = lambda: (indicate(home_page)))
     cancel_btn.place(x = 120, y = 150)
     
-    root.destroy()
+    #root.destroy()
     game_menu.mainloop()
         
 #=-=-=-=-=-=-=-EXTRA-=-=-=-=-=-=-=#
