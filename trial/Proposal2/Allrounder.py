@@ -1,0 +1,139 @@
+
+import os
+import tkinter as tk
+import customtkinter as ctk
+from scapy.all import ARP, Ether, srp
+from flask import Flask, render_template_string, request, jsonify
+import threading
+import webbrowser
+
+# Flask web server
+app = Flask(__name__)
+
+messages = []
+
+@app.route('/')
+def proposal():
+    return render_template_string('''
+    <html>
+        <head>
+            <title>Proposal</title>
+        </head>
+        <body>
+            <h1>I love you! Do you love me?</h1>
+            <button onclick="window.location.href='/yes'">Yes</button>
+            <button onclick="window.location.href='/no'">Who am I?</button>
+        </body>
+    </html>
+    ''')
+
+@app.route('/yes')
+def yes():
+    return render_template_string('''
+    <html>
+        <head>
+            <title>Response</title>
+        </head>
+        <body>
+            <h1>Thank you! </h1>
+        </body>
+    </html>
+    ''')
+
+@app.route('/no')
+def no():
+    return render_template_string('''
+    <html>
+        <head>
+            <title>Response</title>
+        </head>
+        <body>
+            <h1>🤔 Who am I?</h1>
+            <button onclick="window.location.href='/chat'">Chat</button>
+        </body>
+    </html>
+    ''')
+
+@app.route('/chat')
+def chat():
+    return render_template_string('''
+    <html>
+        <head>
+            <title>Chat</title>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script type="text/javascript">
+                function sendMessage() {
+                    var message = $("#message").val();
+                    $.post("/send_message", {text: message}, function(data) {
+                        $("#messages").append("<p>" + data.text + "</p>");
+                        $("#message").val('');
+                    });
+                }
+            </script>
+        </head>
+        <body>
+            <h1>Chat with me!</h1>
+            <div id="messages"></div>
+            <input type="text" id="message" placeholder="Type a message..."/>
+            <button onclick="sendMessage()">Send</button>
+        </body>
+    </html>
+    ''')
+
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    message = request.form['text']
+    messages.append(message)
+    return jsonify({'text': message})
+
+# Function to scan the local network
+def scan_network():
+    target_ip = "127.0.0.1:5000" #"192.168.1.1/24"
+    arp = ARP(pdst=target_ip)
+    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+    packet = ether/arp
+    result = srp(packet, timeout=3, verbose=0)[0]
+    
+    devices = [{'ip': received.psrc, 'mac': received.hwsrc} for sent, received in result]
+    return devices
+
+# Function to update the device list in the GUI
+def update_device_list():
+    devices = scan_network()
+    device_list.delete(0, tk.END)
+    for device in devices:
+        device_info = f"IP: {device['ip']}, MAC: {device['mac']}"
+        device_list.insert(tk.END, device_info)
+
+# Function to start the Flask server in a separate thread
+def start_flask():
+    app.run(port=5000)
+
+# Function to send the proposal by opening the web page on the target device
+def send_proposal():
+    selected_device = device_list.get(tk.ACTIVE)
+    if selected_device:
+        ip_address = selected_device.split()[1][4:]
+        webbrowser.open(f'http://{ip_address}:5000')
+
+# Setting up the custom Tkinter GUI
+root = ctk.CTk()
+root.title("WiFi Users Location")
+
+frame = ctk.CTkFrame(root)
+frame.pack(pady=20, padx=20, fill="both", expand=True)
+
+device_list = tk.Listbox(frame, width=50, height=15)
+device_list.pack(pady=20)
+
+refresh_button = ctk.CTkButton(frame, text="Refresh", command=update_device_list)
+refresh_button.pack(pady=10)
+
+send_button = ctk.CTkButton(frame, text="Send Proposal", command=send_proposal)
+send_button.pack(pady=10)
+
+# Start the Flask server in a separate thread
+threading.Thread(target=start_flask, daemon=True).start()
+
+# Run the Tkinter main loop
+root.mainloop()

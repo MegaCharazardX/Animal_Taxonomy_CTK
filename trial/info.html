@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Information</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 id="response-header"></h1>
+        <div id="info-content">
+            <p id="info-text">Here is some information about me:</p>
+            <ul>
+                <li>Name: Hari Dhejus 😍</li>
+                <li>Favorite Color: Your Color 😘</li>
+                <li>Hobbies: Admiring You 🥰</li>
+                <li>Instagram_id : vs_hari_dhejus 😁</li>
+                <!-- Add more personal information as needed -->
+            </ul>
+        </div>
+        <div id="buttons" class="hidden">
+            <button id="yes-button">Yes</button>
+            <button id="no-button">No</button>
+        </div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const response = params.get('response');
+        const pleas = params.get('pleas');
+        const responseHeader = document.getElementById('response-header');
+        const infoContent = document.getElementById('info-content');
+        const buttons = document.getElementById('buttons');
+
+        if (response === 'yes') {
+            responseHeader.textContent = "You said YES! ";
+        } else if (response === 'whoami') {
+            responseHeader.textContent = "You asked 'Who am I?' 🤔";
+            infoContent.classList.remove('hidden');
+            buttons.classList.remove('hidden');
+        } else if (response === 'accept') {
+            responseHeader.textContent = "Thank you, I love you! ";
+        } else if (response === 'please') {
+            responseHeader.textContent = pleas + " Please accept my love 😭😭! ";
+            buttons.classList.remove('hidden');
+        }
+
+        document.getElementById('yes-button').addEventListener('click', function() {
+            window.location.href = 'info.html?response=accept';
+        });
+
+        document.getElementById('no-button').addEventListener('click', function() {
+            window.location.href = 'info.html?response=please&pleas=' + pleas + ' Please 😭 ';
+        });
+    </script>
+</body>
+</html>

@@ -5,6 +5,8 @@ import os
 import sqlite3
 from tkinter import messagebox
 from Global_Config import *
+import mysql.connector
+import Password_Hasher as PH
 
 root = CTk()
 
@@ -20,8 +22,7 @@ root.maxsize(width = 600, height = 600)
 
 root.iconbitmap(r"icon/favicon6.ico")
 set_appearance_mode("Dark")
-
-con = sqlite3.connect("Animal_Taxonomy_Db.db")
+con = sqlite3.connect("Animal_Taxonomy_Db.db", timeout = 3)                   
 cur = con.cursor()
 
 global  glb_current_working_directory
@@ -29,7 +30,7 @@ glb_current_working_directory = os.path.dirname(os.path.realpath(__file__))
 
 def validation():
     username = username_entry.get()
-    password = password_entry.get()
+    password = PH.encrypt(password_entry.get())
     if username == "" or password == "":
             error_label = CTkLabel(login_frame, text = "Username or password is wrong", font = ("Bradley Hand ITC" , 15, "italic", "bold"), text_color = "red")
             error_label.place(x = 75, y = 170)

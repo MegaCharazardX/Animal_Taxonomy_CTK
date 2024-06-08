@@ -623,46 +623,6 @@ Contact us --> +91 948 668 3398\n\
                         font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_1)
     label.place(x = 120, y = 80)
 
-
-def games_page ():
-    game_menu = CTk()
-    game_menu.iconbitmap(r"icon/favicon6.ico")
-    centreScreen(game_menu, root,400,200)
-    game_menu.title("Admin Login")
-    game_menu.maxsize(width = 400, height = 200)
-
-    global login_frame
-    login_frame = CTkFrame(game_menu, border_color = glb_color_1, border_width = 2, width = 400, height = 200)
-    login_frame.pack()
-
-    login_label = CTkLabel(login_frame, text = "Choose", font = ("Bradley Hand ITC" , 40, "italic", "bold"), text_color = glb_color_3)
-    login_label.place(x = 130, y = 5)
-
-    # username_label = CTkLabel(login_frame, text = "Username :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
-    # username_label.place(x = 15, y = 70)
-
-    global username_entry
-    online_btn = CTkButton(login_frame, text = "Online", width = 300)
-    online_btn.place(x = 55, y = 70)
-    
-    def Offline():
-        game_menu.destroy()
-        call(["python", glb_current_working_directory + "/Offline_Game_Menu.py"])
-    
-    global password_entry
-    offline_btn = CTkButton(login_frame, text = "Offline", width = 300, command = lambda: (Offline()))
-    offline_btn.place(x = 55, y = 110)
-
-    def back_to_admin_console():
-        game_menu.destroy()
-        call(["python", glb_current_working_directory + "/Animal_Taxonamy_Ctk_Admin_Console.py"])
-
-    cancel_btn = CTkButton(login_frame, height = 15, text = "Back", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
-                            command = lambda: (indicate(home_page)))
-    cancel_btn.place(x = 120, y = 150)
-    
-    root.destroy()
-    game_menu.mainloop()
         
 #=-=-=-=-=-=-=-EXTRA-=-=-=-=-=-=-=#
 
@@ -711,8 +671,6 @@ species_btn = createMenuButton(menu_frame, "Species", indicate, species_page, ge
 
 about_btn = createMenuButton(menu_frame, "About", indicate, about_page, species_btn)
 
-games = createMenuButton(menu_frame, "Games", indicate, games_page, about_btn)
-#Heli_game = createMenuButton(menu_frame, "Heli Game", indicate, Heli, about_btn)
 
 menu_frame.pack(side = "left")
 menu_frame.pack_propagate(False)

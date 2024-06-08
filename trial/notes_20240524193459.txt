@@ -1,0 +1,9 @@
+05.24 7:30 PM
+Script.js
+document.getElementById('yes-button').addEventListener('click', function() {
+    window.location.href = 'info.html?response=yes';
+});
+
+document.getElementById('whoami-button').addEventListener('click', function() {
+    window.location.href = 'info.html?response=whoami&pleas=';
+});
