@@ -16,9 +16,9 @@ glb_color_1 = "darkorchid2"# #FFC125 #FFCC70
 glb_color_2 = "dodgerblue3"
 glb_color_3 = "#308014"# darkorchid2, #308014 #c850c0
 
-centreScreen(root, root,600,600)
+centreScreen(root, root,600,300)
 root.title("Animal Taxonomy")
-root.maxsize(width = 600, height = 600)
+root.maxsize(width = 600, height = 300)
 
 root.iconbitmap(r"icon/favicon6.ico")
 set_appearance_mode("Dark")
@@ -110,21 +110,21 @@ def redirect_to_user(_isadmin = False):
             call(["python", glb_current_working_directory + "/Animal_Taxonomy_CTk_Guest_Console.py"])
         guest_console()
 
-content_frame = CTkFrame(root, border_color = glb_color_1, border_width = 2, width = 600, height = 600)
+content_frame = CTkFrame(root, border_color = glb_color_1, border_width = 2, width = 600, height = 300)
 
-welcome_message = CTkLabel(content_frame, text = welcome_text, font = ("Brush Script MT" , 50, "italic" ))
-welcome_message.place(x = (600/2-len(welcome_text)//2)-100, y = 200)
+welcome_message = CTkLabel(content_frame, text = welcome_text, font = ("Brush Script MT" , 50, "italic" ), text_color= glb_color_2)
+welcome_message.place(x = (600/2-len(welcome_text)//2)-100, y = 30)
 
-welcome_message = CTkLabel(content_frame, text = "To the world of animals", font = ("Brush Script MT" , 18, "italic" ))
-welcome_message.place(x = (600/2-len(welcome_text)//2)-50, y = 280)
+welcome_message = CTkLabel(content_frame, text = "To the world of animals", font = ("Brush Script MT" , 18, "italic" ), text_color= glb_color_2)
+welcome_message.place(x = (600/2-len(welcome_text)//2)-50, y = 80)
 
 guest_mode_btn = CTkButton(content_frame, text = "View As A Guest...", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
                                width = 240, command = lambda :(redirect_to_user()))
-guest_mode_btn.place(x = 45, y = 330)
+guest_mode_btn.place(x = 45, y = 180)
 
 admin_mode_btn = CTkButton(content_frame, text = "View As An Admin...", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
                                 width = 240,command = lambda :(redirect_to_user(True)))
-admin_mode_btn.place(x = 320, y = 330)
+admin_mode_btn.place(x = 320, y = 180)
 
 content_frame.place(x = 0, y = 0)
 

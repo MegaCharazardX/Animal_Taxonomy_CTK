@@ -1,4 +1,3 @@
-import random
 import string
 import Loading
 
@@ -34,6 +33,6 @@ class Encrypter :
 
         return plain_text
 
-#Loading.loading(text = "Encrypting..")
-#e = Encrypter("Hari Dhejus").encrypt()
-#print(e)
+# Loading.loading(text = "Encrypting.. ")
+# e = Encrypter(":OQuds-N`_&").decrypt()
+# print(e)

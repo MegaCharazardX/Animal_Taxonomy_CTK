@@ -5,6 +5,8 @@ import os
 from subprocess import call
 import sqlite3
 from Global_Config import *
+import mysql.connector
+import Password_Hasher as PH
 
 
 root = CTk()
@@ -12,7 +14,7 @@ root = CTk()
 centreScreen(root, root,1000,550)
 root.title("Animal Taxonomy")
 root.maxsize(width = 1000, height = 550)
-root.iconbitmap(r"icon/favicon6.ico")
+root.iconbitmap(r"E:\Dhejus\PythonPractice\XII_Project\Animal_Taxonomy_CTK\icon\favicon6.ico")
 root.minsize(width = 1000, height = 550)
 set_appearance_mode("Dark")
 
@@ -88,7 +90,7 @@ def createButton(_frame, _text, _corner_radius, _call_back_function, _xpos, _ypo
     return tmp_btn
 
 def createImageButton(_frame, _text, _image, _corner_radius, _call_back_function, _argument, _xpos, _ypos):
-    img = Image.open(r"Images/" + _image)
+    img = Image.open(r"E:\Dhejus\PythonPractice\XII_Project\Animal_Taxonomy_CTK\images/" + _image)
     tmp_btn = CTkButton(_frame,text = _text, image = CTkImage(dark_image=img, light_image=img),corner_radius = _corner_radius,
                          width=  glb_img_btn_width, height= glb_img_btn_height,state = "normal",
                            command = lambda: (_call_back_function(_argument)))
@@ -152,6 +154,361 @@ def destroyAfterForLabel(_widget):
     _widget.configure("")
 
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=PAGES=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+def add_page():
+    
+    add_frame = createFrame(main_frame,  glb_color_2,  2, "transparent", _is_content_frame = True)
+    label = CTkLabel(add_frame, text = "ADD",font = ("Bradley Hand ITC" , 50, "italic", "bold" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = 330, y = 5)
+
+    label = CTkLabel(add_frame, text = "Add Admin :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = glb_common_xpos, y = 70)
+
+    user_name_label = CTkLabel(add_frame, text = "Username:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    user_name_label.place(x = glb_common_xpos, y = 105)
+
+    user_name_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    user_name_entry.place(x = 200, y = 105)
+
+    password_label = CTkLabel(add_frame, text = "Password:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    password_label.place(x = glb_common_xpos, y = 135)
+
+    password_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600, show = "*")
+    password_entry.place(x = 200, y = 135)
+
+    re_password_label = CTkLabel(add_frame, text = "Confirm Password:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    re_password_label.place(x = glb_common_xpos, y = 165)
+
+    re_password_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600, show = "*")
+    re_password_entry.place(x = 200, y =165)
+    
+    def insert_admin():
+        _username = user_name_entry.get()
+        _password = PH.encrypt(password_entry.get())
+        _repassword = PH.encrypt(re_password_entry.get())
+
+        tmp_qry ="SELECT Username FROM User_details WHERE Username= '"+_username+"'AND Active = 1"
+        cur.execute(tmp_qry)
+        row = cur.fetchone()
+
+        if _password != _repassword:
+            errorlabel = CTkLabel(add_frame, text = "Passwords Don't Match", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 200)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+        elif _username =="" or _password =="" or _repassword =="":
+            errorlabel = CTkLabel(add_frame, text = "Blanks Are Not Allowed", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 200)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+        elif row :
+            errorlabel = CTkLabel(add_frame, text = "This Already Exists", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 200)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+        else:
+            errorlabel = CTkLabel(add_frame, text = "Sucsesfully Added", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Green" )
+            errorlabel.place(x = 600, y = 200)
+            def refresh():
+                errorlabel.configure(text = "")
+                add_page()
+            errorlabel.after(glb_after_time, refresh)
+            cur.execute("INSERT INTO User_details (Username, Password) VALUES (?,?)",(_username, _password))
+            con.commit()
+
+    insert_btn = createButton(add_frame, "Insert", 40, insert_admin, 430, 200)
+
+    label = CTkLabel(add_frame, text = "Add Entry :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = glb_common_xpos, y = 200)
+
+    name_label = CTkLabel(add_frame, text = "Name :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    name_label.place(x = glb_common_xpos, y = 235)
+
+    name_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    name_entry.place(x = 200, y = 235)
+
+    kingdom_label = CTkLabel(add_frame, text = "Kingdom:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    kingdom_label.place(x = glb_common_xpos, y = 265)
+
+    kingdom_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    kingdom_entry.place(x = 200, y = 265)
+
+    phylum_label = CTkLabel(add_frame, text = "Phylum:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    phylum_label.place(x = glb_common_xpos, y = 295)
+
+    phylum_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    phylum_entry.place(x = 200, y = 295)
+
+    class_label = CTkLabel(add_frame, text = "Class:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    class_label.place(x = glb_common_xpos, y = 325)
+
+    class_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    class_entry.place(x = 200, y = 325)
+
+    order_label = CTkLabel(add_frame, text = "Order:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    order_label.place(x = glb_common_xpos, y = 355)
+
+    order_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    order_entry.place(x = 200, y = 355)
+
+    family_label = CTkLabel(add_frame, text = "Family:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    family_label.place(x = glb_common_xpos, y = 385)
+
+    family_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    family_entry.place(x = 200, y = 385)
+
+    genus_label = CTkLabel(add_frame, text = "Genus:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    genus_label.place(x = glb_common_xpos, y = 415)
+
+    genus_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    genus_entry.place(x = 200, y = 415)
+
+    species_label = CTkLabel(add_frame, text = "Species:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    species_label.place(x = glb_common_xpos, y = 445)
+
+    species_entry = CTkEntry(add_frame, text_color = glb_color_3, width = 600)
+    species_entry.place(x = 200, y = 445)
+    
+    def insert():
+        _name = name_entry.get().title()
+        _kingdom = kingdom_entry.get().title()
+        _phylum = phylum_entry.get().title()
+        _class = class_entry.get().title()
+        _order = order_entry.get().title()
+        _family = family_entry.get().title()
+        _genus = genus_entry.get().title()
+        _species = species_entry.get().title()
+
+        tmp_qry ="SELECT name FROM animal_details WHERE name = '"+_name+"' AND active != 0"
+        cur.execute(tmp_qry)
+        row = cur.fetchone()
+        if row:
+            errorlabel = CTkLabel(add_frame, text = "This Already Exists", font = ("Arial", 12, "italic", "bold"),
+                    fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 475)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+ 
+        else :
+            errorlabel = CTkLabel(add_frame, text = "Sucsesfully Added", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Green" )
+            errorlabel.place(x = 600, y = 475)
+            def refresh():
+                errorlabel.configure(text = "")
+                add_page()
+            errorlabel.after(glb_after_time, refresh)
+            cur.execute("INSERT INTO animal_details (name, kingdom, phylum, class, naturalorder, family, genus, species) VALUES (?,?,?,?,?,?,?,?)",(_name, _kingdom, _phylum, _class, _order, _family, _genus, _species))
+            con.commit()
+
+    insert_btn = createButton(add_frame, "Insert", 40, insert, 430, 480)
+
+def update_page():
+    
+    update_frame = createFrame(main_frame,  glb_color_2,  2, "transparent", _is_content_frame = True)
+
+    label = CTkLabel(update_frame, text = "UPDATE",font = ("Bradley Hand ITC" , 50, "italic", "bold" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = 330, y = 5)
+
+    label = CTkLabel(update_frame, text = "Update entry:-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = glb_common_xpos, y = 70)
+
+    name_update_label = CTkLabel(update_frame, text = "Name Of Animal:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    name_update_label.place(x = glb_common_xpos, y = 105)
+
+    name_update_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    name_update_entry.place(x = 200, y = 105)
+
+    species_update_label = CTkLabel(update_frame, text = "Species Of Animal:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    species_update_label.place(x = glb_common_xpos-5, y = 135)
+
+    species_update_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    species_update_entry.place(x = 200, y = 135)
+
+    name_label = CTkLabel(update_frame, text = "Name :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    name_label.place(x = glb_common_xpos, y = 165)
+
+    name_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    name_entry.place(x = 200, y = 165)
+    
+    kingdom_label = CTkLabel(update_frame, text = "Kingdom:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    kingdom_label.place(x = glb_common_xpos, y = 195)
+
+    kingdom_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    kingdom_entry.place(x = 200, y = 195)
+
+    phylum_label = CTkLabel(update_frame, text = "Phylum:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    phylum_label.place(x = glb_common_xpos, y = 225)
+
+    phylum_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    phylum_entry.place(x = 200, y = 225)
+
+    class_label = CTkLabel(update_frame, text = "Class:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    class_label.place(x = glb_common_xpos, y = 255)
+
+    class_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    class_entry.place(x = 200, y = 255)
+
+    order_label = CTkLabel(update_frame, text = "Order:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    order_label.place(x = glb_common_xpos, y = 285)
+
+    order_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    order_entry.place(x = 200, y = 285)
+
+    family_label = CTkLabel(update_frame, text = "Family:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    family_label.place(x = glb_common_xpos, y = 315)
+
+    family_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    family_entry.place(x = 200, y = 315)
+
+    genus_label = CTkLabel(update_frame, text = "Genus:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    genus_label.place(x = glb_common_xpos, y = 345)
+
+    genus_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    genus_entry.place(x = 200, y = 345)
+
+    species_label = CTkLabel(update_frame, text = "Species:-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    species_label.place(x = glb_common_xpos, y = 375)
+
+    species_entry = CTkEntry(update_frame, text_color = glb_color_3, width = 600)
+    species_entry.place(x = 200, y = 375)
+    
+    def update():
+        _nametoupdate = name_update_entry.get().title()
+        _speciestoupdate = species_update_entry.get().title()
+        _name = name_entry.get().title()
+        _kingdom = kingdom_entry.get().title()
+        _phylum = phylum_entry.get().title()
+        _class = class_entry.get().title()
+        _order = order_entry.get().title()
+        _family = family_entry.get().title()
+        _genus = genus_entry.get().title()
+        _species = species_entry.get().title()
+
+        tmp_qry = "SELECT name FROM animal_details WHERE name = '"+_nametoupdate+"' AND species = '"+_speciestoupdate+"' AND active != 0"
+        cur.execute(tmp_qry)
+        row = cur.fetchone()
+        
+        if row :
+            cur.execute("INSERT INTO animal_details (name, kingdom, phylum, class, naturalorder, family, genus, species) VALUES (?,?,?,?,?,?,?,?)",(_name, _kingdom, _phylum, _class, _order, _family, _genus, _species))
+            con.commit()
+
+            cur.execute("UPDATE animal_details SET active = 0 WHERE name = '"+_nametoupdate+"'")  
+            con.commit()
+            errorlabel = CTkLabel(update_frame, text = "Sucsesfully Updated", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Green" )
+            errorlabel.place(x = 600, y = 415)
+            def refresh():
+                errorlabel.configure(text = "")
+                update_page()
+            errorlabel.after(glb_after_time, refresh)
+        else:
+            errorlabel = CTkLabel(update_frame, text = "No Such Animal", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 415)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+    update_btn = createButton(update_frame, "Update", 40, update, 430, 415)
+
+def delete_page():
+
+    delete_frame = createFrame(main_frame,  glb_color_2,  2, "transparent", _is_content_frame = True)
+
+    label = CTkLabel(delete_frame, text = "DELETE",font = ("Bradley Hand ITC" , 50, "italic", "bold" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = 330, y = 5)
+
+    label = CTkLabel(delete_frame, text = "Delete User :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = glb_common_xpos, y = 70)
+
+    username_label = CTkLabel(delete_frame, text = "Username :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    username_label.place(x = glb_common_xpos, y = 105)
+
+    username_entry = CTkEntry(delete_frame, text_color = glb_color_3, width = 600)
+    username_entry.place(x = 170, y = 105)
+    
+    def on_delete_admin_click():
+        _name = username_entry.get()
+        
+        tmp_qry = "SELECT Username FROM User_details WHERE Username = '"+_name+"' AND Active = 1"
+        cur.execute(tmp_qry)
+        row = cur.fetchone()
+
+        if row :
+            cur.execute("UPDATE User_details set active = 0 WHERE Username = '"+_name+"'")
+            con.commit()
+
+            errorlabel = CTkLabel(delete_frame, text = "Sucsesfully Deleted", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Green" )
+            errorlabel.place(x = 600, y = 137)
+            def refresh():
+                errorlabel.configure(text = "")
+                delete_page()
+            errorlabel.after(glb_after_time, refresh)
+        else :
+
+            errorlabel = CTkLabel(delete_frame, text = "No Such Username", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 137)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+    delete_admin_btn = createButton(delete_frame, "Delete Admin", 40, on_delete_admin_click, 430, 140)
+
+    label = CTkLabel(delete_frame, text = "Delete Entry :-",font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_3)
+    label.place(x = glb_common_xpos, y = 170)
+
+    name_label = CTkLabel(delete_frame, text = "Name :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    name_label.place(x = glb_common_xpos, y = 210)
+
+    name_entry = CTkEntry(delete_frame, text_color = glb_color_3, width = 600)
+    name_entry.place(x = 170, y = 210)
+
+    species_label = CTkLabel(delete_frame, text = "Species :-", font = ("Bradley Hand ITC" , 20, "italic", "bold"), text_color = glb_color_2)
+    species_label.place(x = glb_common_xpos, y = 240)
+
+    species_entry = CTkEntry(delete_frame, text_color = glb_color_3, width = 600)
+    species_entry.place(x = 170, y = 240)
+    
+    def on_delete_entry_click():
+        _name = name_entry.get().title()
+        _species = species_entry.get().title()
+
+        tmp_qry = "SELECT name FROM animal_details WHERE name = '"+_name+"' AND species = '"+_species+"' AND active != 0"
+        cur.execute(tmp_qry)
+        row = cur.fetchone()
+        if row :
+            cur.execute("UPDATE animal_details set active = 0 WHERE name = '"+_name+"' AND species = '"+_species+"' AND active != 0")
+            con.commit()
+
+            errorlabel = CTkLabel(delete_frame, text = "Sucsesfully Deleted", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Green" )
+            errorlabel.place(x = 600, y = 270)
+            def refresh():
+                errorlabel.configure(text = "")
+                delete_page()
+            errorlabel.after(glb_after_time, refresh)
+        else:
+
+            errorlabel = CTkLabel(delete_frame, text = "No Such Animal", font = ("Arial", 12, "italic", "bold"),
+                                fg_color = "transparent", text_color = "Red" )
+            errorlabel.place(x = 600, y = 270)
+            def refresh():
+                errorlabel.configure(text = "")
+            errorlabel.after(glb_after_time, refresh)
+
+    delete_admin_btn = createButton(delete_frame, "Delete Entry", 40, on_delete_entry_click, 430, 275)
 
 def home_page():
     home_frame = createFrame(main_frame,  glb_color_2,  2, "transparent", _is_content_frame = True)
@@ -190,7 +547,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  name LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  name LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom") 
                 
@@ -199,7 +564,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
                 label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -208,7 +581,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  phylum LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  phylum LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -217,7 +598,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  class LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  class LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -226,7 +615,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -235,7 +632,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -244,7 +649,15 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%'AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%'AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -253,11 +666,18 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active = 1"):
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
-
     label = createSearchResultLabel(home_frame)
 
     search = createSearchEntry(home_frame, _ishomepage = True)
@@ -279,7 +699,7 @@ def kingdom_page():
             label.destroy()
         tosearch = "Animalia"
         
-        tmp_qry = "SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%' AND active = 1"
+        tmp_qry = "SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%' AND active != 0"
         record_set = cur.execute(tmp_qry)
         for row in record_set:
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), fg_color = "transparent", text_color = glb_color_1)
@@ -294,7 +714,7 @@ def kingdom_page():
         for label in result_frame.winfo_children():
             label.destroy()
         tosearch = "Plantae"
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active = 1"):
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), fg_color = "transparent", text_color = glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
 
@@ -308,7 +728,7 @@ def kingdom_page():
             label.destroy()
         tosearch = "Fungi"
         
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active = 1"):
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), fg_color = "transparent", text_color = glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
             
@@ -323,7 +743,7 @@ def kingdom_page():
             label.destroy()
         tosearch = "Protista"
         
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active = 1"):
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), fg_color = "transparent", text_color = glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
             
@@ -338,7 +758,7 @@ def kingdom_page():
             label.destroy()
         tosearch = "Monera"
         
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active = 1"):
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), fg_color = "transparent", text_color = glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
             
@@ -366,7 +786,7 @@ def phylum_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
-            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  phylum LIKE '%"+tosearch+"%' AND active = 1 "):
+            for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  phylum LIKE '%"+tosearch+"%' AND active != 0 "):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
@@ -493,6 +913,14 @@ def class_page():
         tosearch = ((search.get())).title()
         for label in result_frame.winfo_children():
             label.destroy()
+            
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
         ypos = 10
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  class LIKE '%"+tosearch+"%' "):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1 )
@@ -518,9 +946,20 @@ def order_page():
     def on_order_page_search_btn_click():
         ypos = 10
         tosearch = ((search.get())).title()
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active = 1"):
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
+            
             
  
     search_btn = createSearchButton(order_frame, on_order_page_search_btn_click)
@@ -539,7 +978,18 @@ def family_page():
 
     def on_family_page_search_btn_click():
         tosearch = ((search.get())).title()
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active = 1"):
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
 
@@ -558,7 +1008,18 @@ def genus_page():
 
     def on_genus_search_click():
         tosearch = ((search.get())).title()
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%' AND active = 1"):
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
             
@@ -584,7 +1045,20 @@ def species_page():
     def on_species_search_click():
         ypos = 10
         tosearch = ((search.get())).title()
-        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active = 1"):
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
+        
+        
+        for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
             
@@ -646,8 +1120,15 @@ menu_frame = CTkFrame(root, fg_color = "transparent")
 
 crud_frame = createFrame(menu_frame, "",  border_line_size_2, glb_fg_color_transparent , 5, 5, 150, glb_crud_frame_height)
 
+# global insert_btn, edit_btn, delete_btn, back_btn
 
-img = Image.open(r"Images/" + "previous.png")
+# insert_btn = createImageButton(crud_frame, "", "add.png", 100, indicate, add_page, 25, 8)
+
+# edit_btn = createImageButton(crud_frame, "", "edit_blue.png", 100, indicate, update_page, 85, 8)
+
+# delete_btn = createImageButton(crud_frame, "", "delete.png", 100,  indicate, delete_page, 25, 48)
+
+img = Image.open(r"E:\Dhejus\PythonPractice\XII_Project\Animal_Taxonomy_CTK\images/" + "previous.png")
 back_btn =  CTkButton(crud_frame, text = "", image = CTkImage(dark_image=img, light_image=img),corner_radius = 100,
                          width=  glb_img_btn_width, height= glb_img_btn_height,state = "normal",
                            command = lambda: (back_to_main_console()))
@@ -671,6 +1152,7 @@ species_btn = createMenuButton(menu_frame, "Species", indicate, species_page, ge
 
 about_btn = createMenuButton(menu_frame, "About", indicate, about_page, species_btn)
 
+#Heli_game = createMenuButton(menu_frame, "Heli Game", indicate, Heli, about_btn)
 
 menu_frame.pack(side = "left")
 menu_frame.pack_propagate(False)

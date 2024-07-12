@@ -134,13 +134,13 @@ def createSearchButton(_frame, _command, _ishomepage = False):
         tmp_Search_Btn.place(x = 660, y = 105)
         return tmp_Search_Btn
 
-def createSearchEntry(_frame, _ishomepage = False):
+def createSearchEntry(_frame, _ishomepage = False, placeholder_text = ""):
     if _ishomepage :
-        tmp_Entry = CTkEntry(_frame, width = 640, text_color = glb_color_3)
+        tmp_Entry = CTkEntry(_frame, width = 640, text_color = glb_color_3, placeholder_text="", font=("Arial" , 14, "italic" ))
         tmp_Entry.place(x = 15, y = 130)
         return tmp_Entry
     else:
-        tmp_Entry = CTkEntry(_frame, width = 640, text_color = glb_color_3)
+        tmp_Entry = CTkEntry(_frame, width = 640, text_color = glb_color_3, placeholder_text = "")
         tmp_Entry.place(x = 15, y = 105)
         return tmp_Entry
 
@@ -547,6 +547,14 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  name LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom") 
@@ -555,6 +563,14 @@ def home_page():
         elif home_radio_val.get() == "kingdom":
             for label in result_frame.winfo_children():
                 label.destroy()
+            
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
             
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  kingdom LIKE '%"+tosearch+"%'AND active != 0"):
                 label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
@@ -565,6 +581,14 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  phylum LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
@@ -573,6 +597,14 @@ def home_page():
         elif home_radio_val.get() == "class":
             for label in result_frame.winfo_children():
                 label.destroy()
+            
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
             
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  class LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
@@ -583,6 +615,14 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
@@ -591,6 +631,14 @@ def home_page():
         elif home_radio_val.get() == "family":
             for label in result_frame.winfo_children():
                 label.destroy()
+            
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
             
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
@@ -601,6 +649,14 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%'AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
@@ -610,13 +666,21 @@ def home_page():
             for label in result_frame.winfo_children():
                 label.destroy()
             
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
+            
             for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active != 0"):
                 label = CTkLabel(result_frame, text = row,font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
                 label.pack(padx = 10, pady = 10, side = "bottom")
                 
     label = createSearchResultLabel(home_frame)
 
-    search = createSearchEntry(home_frame, _ishomepage = True)
+    search = createSearchEntry(home_frame, _ishomepage = True, placeholder_text = "Enter * for all entry")
 
     search_btn = createSearchButton(home_frame, on_home_search_btn_click, _ishomepage = True)
 
@@ -849,6 +913,14 @@ def class_page():
         tosearch = ((search.get())).title()
         for label in result_frame.winfo_children():
             label.destroy()
+            
+            if tosearch == "*":
+                
+                cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+                tmpqry = cur.fetchall()
+                for row in tmpqry :
+                    label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                    label.pack(padx = 10, pady = 10, side = "bottom") 
         ypos = 10
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  class LIKE '%"+tosearch+"%' "):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1 )
@@ -874,9 +946,20 @@ def order_page():
     def on_order_page_search_btn_click():
         ypos = 10
         tosearch = ((search.get())).title()
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  naturalorder LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
+            
             
  
     search_btn = createSearchButton(order_frame, on_order_page_search_btn_click)
@@ -895,6 +978,17 @@ def family_page():
 
     def on_family_page_search_btn_click():
         tosearch = ((search.get())).title()
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  family LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
@@ -914,6 +1008,17 @@ def genus_page():
 
     def on_genus_search_click():
         tosearch = ((search.get())).title()
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  genus LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
@@ -940,6 +1045,19 @@ def species_page():
     def on_species_search_click():
         ypos = 10
         tosearch = ((search.get())).title()
+        for label in result_frame.winfo_children():
+            label.destroy()
+            
+        if tosearch == "*":
+            
+            cur.execute("SELECT name , kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE active != 0 ORDER BY name DESC")
+            tmpqry = cur.fetchall()
+            for row in tmpqry :
+                label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+                label.pack(padx = 10, pady = 10, side = "bottom") 
+                
+        
+        
         for row in cur.execute("SELECT name, kingdom, phylum, class, naturalorder, family, genus, species FROM animal_details WHERE  species LIKE '%"+tosearch+"%' AND active != 0"):
             label = CTkLabel(result_frame, text = row, font = ("Arial" , 14, "italic" ),text_color=glb_color_1)
             label.pack(padx = 10, pady = 10, side = "bottom")
@@ -978,7 +1096,6 @@ Contact us --> +91 948 668 3398\n\
         Thank you for using this program © AnimalTaxonaomy HAPAA™", 
                         font = ("Brush Script MT" , 20, "italic" ), fg_color = "transparent", text_color = glb_color_1)
     label.place(x = 120, y = 80)
-
 
         
 #=-=-=-=-=-=-=-EXTRA-=-=-=-=-=-=-=#

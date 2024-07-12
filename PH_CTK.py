@@ -22,7 +22,7 @@ centreScreen(root, root,app_width,app_height)
 root.title("Animal Taxonomy")
 root.maxsize(width = app_width, height = app_height)
 
-root.iconbitmap(r"icon/favicon6.ico")
+#root.iconbitmap(r"icon/favicon6.ico")
 set_appearance_mode("Dark")
 
 #=-=-=-=-=-=-=-=-==-=-=
@@ -43,7 +43,7 @@ def createSearchButton(_frame, _command, _ishomepage = False):
     else:
         tmp_Search_Btn = CTkButton(_frame, text = "SEARCH", fg_color = glb_color_2,hover_color = glb_color_3,corner_radius = 35,
                                 command = lambda :(_command()))
-        tmp_Search_Btn.place(x = 660, y = 105)
+        tmp_Search_Btn.place(x = 240, y = 185)
         return tmp_Search_Btn
 
 #=-=-=-=-=-=-=-=-==-=-=
@@ -72,16 +72,36 @@ label.place(x = 5, y = 130)
 entry = CTkEntry(content_frame, text_color = glb_color_3, width = 300)
 entry.place(x = 270, y = 130)
 
+
+result_frame = CTkFrame(root, border_color = glb_color_1, border_width = 2, width = 200, height =40)
+result_frame.place(x = 220, y = 230)
+
+
+label = CTkLabel(result_frame, text ="Result : ", font = ("Arial" , 14, "italic" ), text_color = "Red")
+label.place(x = 250, y = 230)
+
 def on_btn_click():
     tosearch = ((entry.get()))
     if home_radio_val.get() == "en":
-        enc = PH.encrypt(tosearch)
+        enc = PH.Encrypter(tosearch).encrypt()
         
-        label = CTkLabel(content_frame, text = enc, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
-        label.pack(padx = 10, pady = 10, side = "bottom")
+        for reslabel in result_frame.winfo_children():
+            reslabel.destroy()
+            
+        reslabel = CTkLabel(result_frame, text = enc, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+        reslabel.place(x = 300, y = 230)
+        
+    if home_radio_val.get() == "de":
+        enc = PH.Encrypter(tosearch).decrypt()
+        
+        for reslabel in result_frame.winfo_children():
+            reslabel.destroy()
+            
+        reslabel = CTkLabel(result_frame, text = enc, font = ("Arial" , 14, "italic" ), text_color = glb_color_1)
+        reslabel.place(x = 300, y = 230)
         
 
 
-search_btn = createSearchButton(content_frame, on_btn_click, _ishomepage = True)
+search_btn = createSearchButton(content_frame, on_btn_click)
 
 root.mainloop()

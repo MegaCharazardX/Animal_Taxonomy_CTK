@@ -10,10 +10,11 @@ def loading(animation = "|/-\\", startTime = 5, text = "Hi. On behalf of Loading
         while True:
             for i in range(10):
                 time.sleep(speed)  # Feel free to experiment with the speed here
-                sys.stdout.write(f"\r{text}" + animation[i % len(animation)])
+                sys.stdout.write(f"\r{text}" + animation[i % len(animation) ])
                 sys.stdout.flush()
             sys.stdout.flush()
             if time.time() - start_time > startTime:  # The animation will last for 10 seconds
+                print("\n")
                 sys.stdout.flush()
                 break
 

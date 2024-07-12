@@ -1,0 +1,46 @@
+06.11 11:13 PM
+Transfer.py
+import sqlite3
+import mysql.connector
+import pandas as pd
+
+# Connect to SQLite database
+sqlite_conn = sqlite3.connect('your_sqlite_database.db')
+sqlite_cursor = sqlite_conn.cursor()
+
+# Fetch data from SQLite table
+sqlite_cursor.execute("SELECT * FROM your_table_name")
+rows = sqlite_cursor.fetchall()
+
+# Fetch column names from SQLite table
+col_names = [desc[0] for desc in sqlite_cursor.description]
+
+# Create a DataFrame from the SQLite data
+df = pd.DataFrame(rows, columns=col_names)
+
+# Close the SQLite connection
+sqlite_conn.close()
+
+# Connect to MySQL database
+mysql_conn = mysql.connector.connect(
+    host='your_mysql_host',
+    user='your_mysql_user',
+    password='your_mysql_password',
+    database='your_mysql_database'
+)
+mysql_cursor = mysql_conn.cursor()
+
+# Insert data into MySQL table
+for index, row in df.iterrows():
+    sql = "INSERT INTO your_table_name ({}) VALUES ({})".format(
+        ", ".join(col_names),
+        ", ".join(["%s"] * len(col_names))
+    )
+    mysql_cursor.execute(sql, tuple(row))
+
+# Commit the transaction
+mysql_conn.commit()
+
+# Close the MySQL connection
+mysql_cursor.close()
+mysql_conn.close()
